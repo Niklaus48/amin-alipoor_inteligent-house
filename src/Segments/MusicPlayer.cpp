@@ -41,7 +41,10 @@ namespace segments{
     }
 
     void MusicPlayer::Init(){
-
+        pinMode(relatedBuzzerPin, OUTPUT);
+        Serial.print("Music Player(Buzzer) Initialized on pin ");
+        Serial.print(relatedBuzzerPin);
+        Serial.println();
     }
 
     void MusicPlayer::Update(){

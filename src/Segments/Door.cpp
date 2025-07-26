@@ -4,12 +4,11 @@
 namespace segments{
         
     //Constructor
-    Door::Door(int pin, int open, int close):openDegree(open), closeDegree(close) {
-
+    Door::Door(int pin, int open, int close){
         openDegree = open;
         closeDegree = close;
         relatedServo = Servo();
-        relatedServo.attach(pin);
+        relatedServoPin = pin;
     }
 
     void Door::SetOpen(bool open) {
@@ -22,7 +21,10 @@ namespace segments{
     }
 
     void Door::Init(){
-
+        relatedServo.attach(relatedServoPin);
+        Serial.print("Door(Servo) Initialized on pin ");
+        Serial.print(relatedServoPin);
+        Serial.println();
     }
 
     void Door::Update(){

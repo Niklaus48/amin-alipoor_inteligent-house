@@ -4,8 +4,7 @@
 namespace segments{
 
         //Constructor
-        Thermometer::Thermometer(int relatedPin, uint8_t type) : dht(relatedPin, type){
-            dht.begin();
+        Thermometer::Thermometer(int relatedPin, uint8_t type) : dht(relatedPin, type){            
         }
 
         String Thermometer::GetTemperatureAsString() {
@@ -25,10 +24,19 @@ namespace segments{
         }
 
         void Thermometer::Init(){
-
+            dht.begin();
+            Serial.println("Thermometer(DHT) Initialized Successfully");
+            Serial.println();
         }
 
         void Thermometer::Update(){
-            
+            static unsigned long updateDelay = 0;
+            if (millis() - updateDelay >= 1000){
+                HouseState::Instance.Temperature = dht.readTemperature();
+                HouseState::Instance.Humidity = dht.readHumidity();
+
+                NotifyObservers(HouseState::Instance);
+                updateDelay = millis();
+            }
         }
 }

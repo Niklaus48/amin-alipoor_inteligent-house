@@ -1,14 +1,12 @@
 #include <Arduino.h>
-#include <WiFi.h>
-#include <WiFiClient.h>
-#include <WebServer.h>
-#include <uri/UriBraces.h>
 #include <TM1637Display.h>
 #include <Adafruit_SSD1306.h>
 #include <Segments/Alarm.h>
 #include <Segments/Door.h>
+#include <Segments/ServerLogic.h>
 #include <Segments/MusicPLayer.h>
 #include <Segments/Thermometer.h>
+#include <Segments/Fan.h>
 #include <Observer_Pattern/ISubject.h>
 
 using namespace segments;
@@ -17,33 +15,11 @@ using namespace segments;
 bool isPirActive = false;
 
 //---------------------class----------------
-class ServerLogic{
 
-  public:
-    WebServer server;
-
-    //Constructor
-    ServerLogic(const char* ssid, const char *pass, int32_t channel): server(80) {
-
-      WiFi.begin(ssid, pass, channel);
-      while (WiFi.status() != WL_CONNECTED) {
-        delay(100);
-      }
-
-      //config routes here
-
-      server.begin();
-    }
-
-    void sendHtml() {
-      //server.send(200, "text/html", response);
-    }
-};
 struct Pin{
   int i;
   int j;
 };
-
 
 //--------------------object-------------------
 Pin logo[] = {
@@ -82,39 +58,23 @@ Pin logo[] = {
 };
 Door leftDoor(33, 180, 90);
 Door rightDoor(18, -90, 90);
-Alarm alarmSystem(35);
+Fan fan(25);
+Alarm alarmSystem(26);
 Thermometer thermo(23, DHT22);
-MusicPlayer musicPLayer(1);
-ServerLogic serverLogic("X^2 + 1 = 0", "javabe haghighi nadarad", 8);
-TM1637Display sevSeg = TM1637Display(31, 33);
+MusicPlayer musicPLayer(26);
+ServerLogic serverLogic("Wokwi-GUEST", "", 8);
+TM1637Display sevSeg = TM1637Display(27, 34);
 
-IComponent* components[] = { &leftDoor, &rightDoor, &alarmSystem, &musicPLayer, &thermo};
-
+IComponent* components[] = {&leftDoor, &rightDoor, &alarmSystem, &musicPLayer, &thermo, &fan, &serverLogic};
+HouseState HouseState::Instance;// create a singletone instance of HouseState class
 
 void setup() {
   Serial.begin(9600);
-
-  ISubject<HouseState>& subject = thermo; // reference to base interface
- 
-  // WiFi.begin(WIFI_SSID, WIFI_PASSWORD, WIFI_CHANNEL);
-  // Serial.println("trying to connect to wifi");
-  // //Wait for connection
-  // while (WiFi.status() != WL_CONNECTED) {
-  //   delay(100);
-  //   Serial.print(".");
-  // }
-  // Serial.println("Successfully Connected to server!");
-
-  // //server.on("/", sendHtml);
-
-  // server.begin();
-  // Serial.println("HTTP server started");
-  // Serial.println("Please open this url to access server => http://localhost:8180");
-  // myServo.write(180);
   for (auto c : components) c->Init();
+  thermo.AddObserver(&alarmSystem);
+  thermo.AddObserver(&fan);
 }
 
 void loop() {
-  serverLogic.server.handleClient();
   for (auto c : components) c->Update();
 }

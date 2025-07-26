@@ -5,8 +5,7 @@ namespace segments{
 
     //Constructor
     Alarm::Alarm(int buzzerPin){
-        this->relatedBuzzerPin = buzzerPin;
-        pinMode(buzzerPin, OUTPUT);
+        relatedBuzzerPin = buzzerPin;   
     } 
 
     void Alarm::MakeSound(int note, float duration) {
@@ -14,7 +13,10 @@ namespace segments{
     }
 
     void Alarm::Init(){
-
+        pinMode(relatedBuzzerPin, OUTPUT);
+        Serial.print("Alarm(Buzzer) Initialized on pin ");
+        Serial.print(relatedBuzzerPin);
+        Serial.println();
     }
 
     void Alarm::Update(){
@@ -22,7 +24,10 @@ namespace segments{
     }
 
     void Alarm::onNotify(const HouseState& state){
-        
+        if (state.Temperature >= 50){
+            Serial.println("High temperature detected!!!");
+            MakeSound(440, 0.5);
+        }
     }
 }
 

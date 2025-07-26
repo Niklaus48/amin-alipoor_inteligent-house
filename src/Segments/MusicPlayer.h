@@ -5,15 +5,15 @@
 
 namespace segments {
 
-    class Note {
-      public:
-        Note(int tempoCount, int freq);
-        float PlayNote(int buzzerPin);
-      private:
-        int tempoCount;
-        int freq;//if set to 0 means its a silence
+  class Note {
+    public:
+      Note(int tempoCount, int freq);
+      float PlayNote(int buzzerPin);
+    private:
+      int tempoCount;
+      int freq;//if set to 0 means its a silence
 
-    };
+  };
 
 
   class MusicPlayer : public IComponent, public IObserver<HouseState> {
