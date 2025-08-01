@@ -8,12 +8,18 @@ namespace segments{
         relatedBuzzerPin = buzzerPin;   
     } 
 
-    void Alarm::MakeSound(int note, float duration) {
-        tone(relatedBuzzerPin, note, duration * 1000);
+    void Alarm::MakeSound(int freq, unsigned long duration) {
+        if (freq == 0){
+            noTone(relatedBuzzerPin);
+            return;
+        }
+
+        tone(relatedBuzzerPin, freq , duration);
     }
 
     void Alarm::Init(){
         pinMode(relatedBuzzerPin, OUTPUT);
+        setToneChannel(2);
         Serial.print("Alarm(Buzzer) Initialized on pin ");
         Serial.print(relatedBuzzerPin);
         Serial.println();
@@ -21,13 +27,17 @@ namespace segments{
 
     void Alarm::Update(){
         
+        if (millis() - updateDelay >= 1000){
+            if (isAlarmActive){            
+                MakeSound(440, 250);
+                updateDelay = millis();
+            }       
+        }
     }
 
     void Alarm::onNotify(const HouseState& state){
-        if (state.Temperature >= 50){
-            Serial.println("High temperature detected!!!");
-            MakeSound(440, 0.5);
-        }
+        isAlarmActive = state.Temperature >= 70;
+        Serial.println("Recieve state from subjects in {Alarm}");
     }
 }
 

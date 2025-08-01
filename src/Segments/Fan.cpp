@@ -2,7 +2,7 @@
 #include "Fan.h"
 
 namespace segments{
-        
+
     //Constructor
     Fan::Fan(int pin){
         relatedServo = Servo();
@@ -10,7 +10,8 @@ namespace segments{
     }
 
     void Fan::Spin() {
-
+        relatedServo.write(turnCount % 2 == 1 ? 0 : 180);
+        turnCount++;
     }
 
     void Fan::Init(){
@@ -21,16 +22,11 @@ namespace segments{
     }
 
     void Fan::Update(){
-        static unsigned long turnDelay = 0;
-        static unsigned int turnCount = 0;
-        if (millis() - turnDelay >= 300){
-
+        if (millis() - updateDelay >= 800){
+            
             if (isActive){
-                if (turnCount % 2 == 1) relatedServo.write(0);
-                else relatedServo.write(180);
-
-                turnDelay = millis();
-                turnCount++;
+                Spin();
+                updateDelay = millis();
             }
             else{
                 relatedServo.write(90);
@@ -39,6 +35,13 @@ namespace segments{
     }
 
     void Fan::onNotify(const HouseState& state){
-        isActive = state.Temperature > state.maxDesireTemp;
+
+        isActive = state.IsFanActive;
+
+        if (state.IsAutoFanActive){
+            isActive = state.Temperature > state.maxDesireTemp;
+        }
+
+        Serial.println("Recieve state from subjects in {Fan}");
     }
 }

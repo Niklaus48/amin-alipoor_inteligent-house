@@ -6,15 +6,16 @@
 
 namespace segments {
 
-  class Alarm : public IComponent, public IObserver<HouseState> {
+  class Alarm: public IComponent, public IObserver<HouseState> {
   public:
     Alarm(int buzzerPin); // Declare constructor
-    void MakeSound(int note, float duration);
+    void MakeSound(int freq, unsigned long duration);
     void Init() override;
     void Update() override;
     void onNotify(const HouseState& state) override;
 
   private:
     int relatedBuzzerPin;
+    bool isAlarmActive;
   };
 }

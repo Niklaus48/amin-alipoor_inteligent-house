@@ -32,6 +32,22 @@ namespace segments{
     }
 
     void Door::onNotify(const HouseState& state){
+
+        if (state.IsMainDoorOpen && state.IsDoorPretectorActive == false){
+            if (isDoorOpen == false){
+                SetOpen(true);
+                isDoorOpen = true;
+            }
+        }
+        else{
+
+            if (isDoorOpen == true){
+                SetOpen(false);
+                isDoorOpen = false;
+            }
+        }
+
         
+        Serial.println("Recieve state from subjects in {Door}");
     }
 }

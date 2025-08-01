@@ -18,6 +18,7 @@ namespace segments {
     int relatedServoPin;
     bool isActive;
     Servo relatedServo;
+    unsigned int turnCount = 0;
 
   };
 }

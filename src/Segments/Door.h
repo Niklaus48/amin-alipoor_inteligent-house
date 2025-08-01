@@ -18,6 +18,7 @@ namespace segments {
     int openDegree;
     int closeDegree;
     int relatedServoPin;
+    bool isDoorOpen;
     Servo relatedServo;
 
   };

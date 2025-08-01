@@ -2,6 +2,7 @@
 
 #include "IComponent.h"
 #include "../Observer_Pattern/IObserver.h"
+#include "../Observer_Pattern/ISubject.h"
 #include "HouseState.h"
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -10,13 +11,12 @@
 
 namespace segments {
 
-  class ServerLogic : public IComponent, public IObserver<HouseState> {
+  class ServerLogic : public IComponent, public ISubject<HouseState>{
   public:
 
     //Constructor
     ServerLogic(const char* ssid, const char *pass, int32_t channel);
-    void sendHtml(const char* Html);
-    void onNotify(const HouseState& state) override;
+    void sendStaticHtml(const HouseState& state);
     void Init() override;
     void Update() override;
 
